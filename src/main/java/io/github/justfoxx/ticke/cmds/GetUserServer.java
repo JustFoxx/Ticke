@@ -26,7 +26,7 @@ public class GetUserServer implements Handler.Command {
 
     @Override @NonNull
     public String getUsage() {
-        return String.format("%s%s (user)", Handler.prefix, getName());
+        return String.format("%s (user)", getName());
     }
 
     @Override
@@ -64,7 +64,7 @@ public class GetUserServer implements Handler.Command {
                 .author(target.getUsername(), null, target.getAvatarUrl());
 
         for (Guild targetServer : targetServers) {
-            embedBuilder.addField(targetServer.getName(), String.format("ID: %s", targetServer.getId().asString()), false);
+            embedBuilder.addField(targetServer.getName(), String.format("ID: %s", targetServer.getId().asString()), true);
         }
 
         return message.getChannel().flatMap(channel ->

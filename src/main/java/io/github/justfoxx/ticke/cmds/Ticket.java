@@ -2,26 +2,34 @@ package io.github.justfoxx.ticke.cmds;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.User;
+import discord4j.core.spec.EmbedCreateSpec;
 import io.github.justfoxx.ticke.Handler;
+import io.github.justfoxx.ticke.cmds.ticket.TicketHelp;
 import reactor.core.publisher.Mono;
 import reactor.util.annotation.NonNull;
 
 import java.util.Arrays;
+import java.util.HashSet;
 
 public class Ticket implements Handler.Command {
+    private final HashSet<TicketCommand> cmds = new HashSet<>();
+    public void register() {
+        cmds.add(new TicketHelp(this));
+    }
     @Override @NonNull
     public String getName() {
-        return null;
+        return "ticket";
     }
 
     @Override @NonNull
     public String getDescription() {
-        return null;
+        return "Ticket management";
     }
 
     @Override @NonNull
     public String getUsage() {
-        return String.format("%s%s (cmd)", Handler.prefix, getName());
+        return String.format("%s (cmd)", getName());
     }
 
     @Override
@@ -32,37 +40,38 @@ public class Ticket implements Handler.Command {
 
     @Override @NonNull
     public Mono<?> run(String[] args, MessageCreateEvent event) throws Exception {
+        if(!(args.length > 0)) return sendHelp(event);
+        String cmdName = args[0].toLowerCase();
+        String[] arr = Arrays.copyOfRange(args, 1, args.length);
+        for (Handler.Command cmd : cmds) {
+            if (!cmd.getName().equals(cmdName)) continue;
+            cmd.canExecute(event);
+            return cmd.run(arr, event);
+        }
+
+        return sendHelp(event);
+    }
+
+     public Mono<?> sendHelp(MessageCreateEvent event) {
         Message message = event.getMessage();
-        String cmd = args[0].toLowerCase();
-        String[] arr = Arrays.copyOfRange(args,1,args.length);
+        User user = event.getClient().getSelf().block();
+        EmbedCreateSpec.Builder embedBuilder = EmbedCreateSpec.builder()
+                .title("Ticket TicketHelp")
+                .description("Ticket management")
+                .author(user.getUsername(), null, user.getAvatarUrl());
 
-        return switch (cmd) {
-            case "create" -> create(arr, event);
-            case "close" -> close(arr, event);
-            case "open" -> open(arr, event);
-            case "remove" -> remove(arr, event);
-            default -> help(arr, event);
-        };
+        for (Handler.Command cmd : cmds) {
+            embedBuilder.addField(cmd.getName(), "Usage: `"+cmd.getUsage()+"`\n"+cmd.getDescription(), true);
+        }
 
+        return message.getChannel().flatMap(channel -> channel.createMessage(embedBuilder.build()));
     }
-    @NonNull
-    private Mono<?> help(String[] args, MessageCreateEvent event) throws Exception {
-        return Mono.empty();
-    }
-    @NonNull
-    private Mono<?> remove(String[] args, MessageCreateEvent event) throws Exception {
-        return Mono.empty();
-    }
-    @NonNull
-    private Mono<?> open(String[] args, MessageCreateEvent event) throws Exception {
-        return Mono.empty();
-    }
-    @NonNull
-    private Mono<?> close(String[] args, MessageCreateEvent event) throws Exception {
-        return Mono.empty();
-    }
-    @NonNull
-    private Mono<?> create(String[] args, MessageCreateEvent event) throws Exception {
-        return Mono.empty();
+
+    public static abstract class TicketCommand implements Handler.Command {
+        protected final Ticket ticket;
+
+        public TicketCommand(Ticket ticket) {
+            this.ticket = ticket;
+        }
     }
 }

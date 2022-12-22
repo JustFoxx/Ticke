@@ -23,7 +23,7 @@ public class GetMemberJoinDate implements Handler.Command {
 
     @Override @NonNull
     public String getUsage() {
-        return String.format("%s%s (user)", Handler.prefix, getName());
+        return String.format("%s (user)", getName());
     }
 
     @Override

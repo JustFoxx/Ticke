@@ -23,10 +23,16 @@ public class Handler {
         void canExecute(MessageCreateEvent event) throws Exception;
         @NonNull Mono<?> run(String[] args, MessageCreateEvent event) throws Exception;
     }
+
+    public static Command GETUSERSERVER = new GetUserServer();
+    public static Command GETMEMBERJOINDATE = new GetMemberJoinDate();
+    public static Ticket TICKET = new Ticket();
+
     public static void register() {
-        cmds.add(new GetUserServer());
-        cmds.add(new GetMemberJoinDate());
-        cmds.add(new Ticket());
+        TICKET.register();
+        cmds.add(GETUSERSERVER);
+        cmds.add(GETMEMBERJOINDATE);
+        cmds.add(TICKET);
     }
 
     public static Mono<?> handle(MessageCreateEvent event) {
@@ -36,7 +42,7 @@ public class Handler {
         }
 
         for (Command cmd : cmds) {
-            if (!cmd.getName().equalsIgnoreCase(args[0].substring(prefix.length()))) return Mono.empty();
+            if (!cmd.getName().equalsIgnoreCase(args[0].substring(prefix.length()))) continue;
             try {
                 cmd.canExecute(event);
                 return cmd.run(Arrays.copyOfRange(args,1,args.length), event);
@@ -49,10 +55,10 @@ public class Handler {
     }
 
     private static Mono<?> errorMessage(Exception ex, MessageCreateEvent event) {
-        User user = event.getMessage().getAuthor().get();
+        User user = event.getClient().getSelf().block();
         EmbedCreateSpec.Builder embedBuilder = EmbedCreateSpec.builder()
                 .title("Error")
-                .description(ex.getMessage())
+                .description("```"+ex.getMessage()+"```")
                 .color(Color.of(0xFF0000))
                 .author(user.getUsername(), null, user.getAvatarUrl());
         return event.getMessage().getChannel().flatMap(channel -> channel.createMessage(embedBuilder.build()));

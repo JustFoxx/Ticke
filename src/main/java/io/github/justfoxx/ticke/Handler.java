@@ -1,9 +1,12 @@
 package io.github.justfoxx.ticke;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.entity.User;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
+import io.github.justfoxx.ticke.cmds.GetMemberJoinDate;
 import io.github.justfoxx.ticke.cmds.GetUserServer;
+import io.github.justfoxx.ticke.cmds.Ticket;
 import reactor.core.publisher.Mono;
 import reactor.util.annotation.NonNull;
 
@@ -12,7 +15,7 @@ import java.util.HashSet;
 
 public class Handler {
     public static final HashSet<Command> cmds = new HashSet<>();
-    public static String prefix = "&'";
+    public static final String prefix = "&'";
     public interface Command {
         @NonNull String getName();
         @NonNull String getDescription();
@@ -22,6 +25,8 @@ public class Handler {
     }
     public static void register() {
         cmds.add(new GetUserServer());
+        cmds.add(new GetMemberJoinDate());
+        cmds.add(new Ticket());
     }
 
     public static Mono<?> handle(MessageCreateEvent event) {
@@ -44,10 +49,12 @@ public class Handler {
     }
 
     private static Mono<?> errorMessage(Exception ex, MessageCreateEvent event) {
+        User user = event.getMessage().getAuthor().get();
         EmbedCreateSpec.Builder embedBuilder = EmbedCreateSpec.builder()
                 .title("Error")
                 .description(ex.getMessage())
-                .color(Color.of(0xFF0000));
+                .color(Color.of(0xFF0000))
+                .author(user.getUsername(), null, user.getAvatarUrl());
         return event.getMessage().getChannel().flatMap(channel -> channel.createMessage(embedBuilder.build()));
     }
 }

@@ -3,7 +3,6 @@ package io.github.justfoxx.ticke.cmds;
 import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Guild;
-import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
 import discord4j.core.spec.EmbedCreateSpec;
@@ -32,9 +31,8 @@ public class GetUserServer implements Handler.Command {
 
     @Override
     public void canExecute(MessageCreateEvent event) throws Exception {
+        if (event.getMessage().getAuthor().isEmpty()) throw  new Exception("Required author is not present");
         if (event.getMessage().getAuthor().get().isBot()) throw  new Exception("You cannot use this command as a bot");
-        if (!event.getMessage().getAuthor().isPresent()) throw  new Exception("Required author is not present");
-        throw new Exception("This command is not yet implemented");
     }
 
     @Override @NonNull
@@ -61,9 +59,9 @@ public class GetUserServer implements Handler.Command {
             throw new Exception("User is not in any servers");
         }
 
-        User finalTarget = target;
         EmbedCreateSpec.Builder embedBuilder = EmbedCreateSpec.builder()
-                .title(String.format("Servers of %s", finalTarget.getUsername()));
+                .title("Servers")
+                .author(target.getUsername(), null, target.getAvatarUrl());
 
         for (Guild targetServer : targetServers) {
             embedBuilder.addField(targetServer.getName(), String.format("ID: %s", targetServer.getId().asString()), false);

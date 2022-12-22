@@ -1,8 +1,11 @@
 package io.github.justfoxx.ticke;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.spec.EmbedCreateSpec;
+import discord4j.rest.util.Color;
 import io.github.justfoxx.ticke.cmds.GetUserServer;
 import reactor.core.publisher.Mono;
+import reactor.util.annotation.NonNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -11,11 +14,11 @@ public class Handler {
     public static final HashSet<Command> cmds = new HashSet<>();
     public static String prefix = "&'";
     public interface Command {
-        String getName();
-        String getDescription();
-        String getUsage();
-        Exception canExecute(MessageCreateEvent event);
-        Mono<?> run(String[] args, MessageCreateEvent event);
+        @NonNull String getName();
+        @NonNull String getDescription();
+        @NonNull String getUsage();
+        void canExecute(MessageCreateEvent event) throws Exception;
+        @NonNull Mono<?> run(String[] args, MessageCreateEvent event) throws Exception;
     }
     public static void register() {
         cmds.add(new GetUserServer());
@@ -29,14 +32,22 @@ public class Handler {
 
         for (Command cmd : cmds) {
             if (!cmd.getName().equalsIgnoreCase(args[0].substring(prefix.length()))) return Mono.empty();
-            var ex = cmd.canExecute(event);
-            if(ex != null) return errorMessage(ex, event);
-            return cmd.run(Arrays.copyOfRange(args,1,args.length), event);
+            try {
+                cmd.canExecute(event);
+                return cmd.run(Arrays.copyOfRange(args,1,args.length), event);
+            } catch (Exception e) {
+                return errorMessage(e, event);
+            }
+
         }
         return Mono.empty();
     }
 
     private static Mono<?> errorMessage(Exception ex, MessageCreateEvent event) {
-        return event.getMessage().getChannel().flatMap(channel -> channel.createMessage(ex.getMessage()));
+        EmbedCreateSpec.Builder embedBuilder = EmbedCreateSpec.builder()
+                .title("Error")
+                .description(ex.getMessage())
+                .color(Color.of(0xFF0000));
+        return event.getMessage().getChannel().flatMap(channel -> channel.createMessage(embedBuilder.build()));
     }
 }

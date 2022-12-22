@@ -10,34 +10,35 @@ import discord4j.core.spec.EmbedCreateSpec;
 import io.github.justfoxx.ticke.Handler;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+import reactor.util.annotation.NonNull;
 
 import java.util.List;
 
 public class GetUserServer implements Handler.Command {
-    @Override
+    @Override @NonNull
     public String getName() {
         return "getuserserver";
     }
 
-    @Override
+    @Override @NonNull
     public String getDescription() {
         return "Gets the server of a user";
     }
 
-    @Override
+    @Override @NonNull
     public String getUsage() {
         return String.format("%s%s (user)", Handler.prefix, getName());
     }
 
     @Override
-    public Exception canExecute(MessageCreateEvent event) {
-        if (event.getMessage().getAuthor().get().isBot()) return new Exception("You cannot use this command as a bot");
-        if (!event.getMessage().getAuthor().isPresent()) return new Exception("Required author is not present");
-        return null;
+    public void canExecute(MessageCreateEvent event) throws Exception {
+        if (event.getMessage().getAuthor().get().isBot()) throw  new Exception("You cannot use this command as a bot");
+        if (!event.getMessage().getAuthor().isPresent()) throw  new Exception("Required author is not present");
+        throw new Exception("This command is not yet implemented");
     }
 
-    @Override
-    public Mono<?> run(String[] args, MessageCreateEvent event) {
+    @Override @NonNull
+    public Mono<?> run(String[] args, MessageCreateEvent event) throws Exception {
         Message message = event.getMessage();
         User target = message.getAuthor().get();
 
@@ -57,7 +58,7 @@ public class GetUserServer implements Handler.Command {
                 .collectList().block();
 
         if (targetServers == null || targetServers.size() == 0) {
-            return message.getChannel().flatMap(channel -> channel.createMessage("User is not in any servers"));
+            throw new Exception("User is not in any servers");
         }
 
         User finalTarget = target;

@@ -1,15 +1,10 @@
 package io.github.justfoxx.ticke.cmds.ticket;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
-import discord4j.core.object.PermissionOverwrite;
-import discord4j.core.object.entity.Member;
-import discord4j.core.object.entity.channel.TextChannel;
-import discord4j.rest.util.Permission;
-import discord4j.rest.util.PermissionSet;
 import io.github.justfoxx.ticke.cmds.Ticket;
 import reactor.core.publisher.Mono;
 import reactor.util.annotation.NonNull;
-
+@SuppressWarnings("ALL")
 public class TicketClose extends Ticket.TicketCommand {
     public TicketClose(Ticket ticket) {
         super(ticket);

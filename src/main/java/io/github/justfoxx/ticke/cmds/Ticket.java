@@ -1,6 +1,5 @@
 package io.github.justfoxx.ticke.cmds;
 
-import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
@@ -11,7 +10,6 @@ import discord4j.rest.util.Permission;
 import io.github.justfoxx.ticke.Handler;
 import io.github.justfoxx.ticke.Main;
 import io.github.justfoxx.ticke.cmds.ticket.*;
-import org.yaml.snakeyaml.Yaml;
 import reactor.core.publisher.Mono;
 import reactor.util.annotation.NonNull;
 
@@ -19,7 +17,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
-
+@SuppressWarnings("ALL")
 public class Ticket implements Handler.Command {
     private final HashSet<TicketCommand> cmds = new HashSet<>();
     public void register() {

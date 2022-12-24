@@ -12,7 +12,7 @@ import reactor.core.scheduler.Schedulers;
 import reactor.util.annotation.NonNull;
 
 import java.util.List;
-
+@SuppressWarnings("ALL")
 public class GetUserServer implements Handler.Command {
     @Override @NonNull
     public String getName() {

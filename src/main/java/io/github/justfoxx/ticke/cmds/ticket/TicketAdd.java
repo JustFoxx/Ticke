@@ -1,7 +1,6 @@
 package io.github.justfoxx.ticke.cmds.ticket;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
-import discord4j.core.object.ExtendedPermissionOverwrite;
 import discord4j.core.object.PermissionOverwrite;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.channel.TextChannel;
@@ -10,11 +9,7 @@ import discord4j.rest.util.PermissionSet;
 import io.github.justfoxx.ticke.cmds.Ticket;
 import reactor.core.publisher.Mono;
 import reactor.util.annotation.NonNull;
-
-import java.security.Permissions;
-import java.util.HashMap;
-import java.util.Map;
-
+@SuppressWarnings("ALL")
 public class TicketAdd extends Ticket.TicketCommand {
     public TicketAdd(Ticket ticket) {
         super(ticket);
@@ -47,7 +42,7 @@ public class TicketAdd extends Ticket.TicketCommand {
     public Mono<?> run(String[] args, MessageCreateEvent event) throws Exception {
         TextChannel channel = (TextChannel) event.getMessage().getChannel().block();
         Member member = event.getMessage().getMemberMentions().get(0).asFullMember().block();
-        PermissionSet permissions = channel.getEffectivePermissions(member).block();;
+        PermissionSet permissions = channel.getEffectivePermissions(member).block();
 
         if(permissions.contains(Permission.VIEW_CHANNEL)) throw new Exception("This user is already in the ticket");
 

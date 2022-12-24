@@ -3,7 +3,6 @@ package io.github.justfoxx.ticke;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.Channel;
-import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
 import io.github.justfoxx.ticke.cmds.GetMemberJoinDate;
@@ -14,7 +13,7 @@ import reactor.util.annotation.NonNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
-
+@SuppressWarnings("ALL")
 public class Handler {
     public static final HashSet<Command> cmds = new HashSet<>();
     public static final String prefix = "&'";

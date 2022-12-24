@@ -4,7 +4,7 @@ import discord4j.core.event.domain.message.MessageCreateEvent;
 import io.github.justfoxx.ticke.cmds.Ticket;
 import reactor.core.publisher.Mono;
 import reactor.util.annotation.NonNull;
-
+@SuppressWarnings("ALL")
 public class TicketCreate extends Ticket.TicketCommand {
     public TicketCreate(Ticket ticket) {
         super(ticket);

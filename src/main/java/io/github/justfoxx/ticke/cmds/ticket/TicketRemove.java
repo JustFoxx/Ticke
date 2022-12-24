@@ -9,7 +9,7 @@ import discord4j.rest.util.PermissionSet;
 import io.github.justfoxx.ticke.cmds.Ticket;
 import reactor.core.publisher.Mono;
 import reactor.util.annotation.NonNull;
-
+@SuppressWarnings("ALL")
 public class TicketRemove extends Ticket.TicketCommand {
     public TicketRemove(Ticket ticket) {
         super(ticket);

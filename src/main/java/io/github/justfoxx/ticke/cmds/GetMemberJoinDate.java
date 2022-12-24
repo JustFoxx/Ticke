@@ -10,6 +10,7 @@ import reactor.util.annotation.NonNull;
 
 import java.time.Instant;
 
+@SuppressWarnings("ALL")
 public class GetMemberJoinDate implements Handler.Command {
     @Override @NonNull
     public String getName() {

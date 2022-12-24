@@ -4,7 +4,7 @@ import discord4j.core.event.domain.message.MessageCreateEvent;
 import io.github.justfoxx.ticke.cmds.Ticket;
 import reactor.core.publisher.Mono;
 import reactor.util.annotation.NonNull;
-
+@SuppressWarnings("ALL")
 public class TicketDelete extends Ticket.TicketCommand {
     public TicketDelete(Ticket ticket) {
         super(ticket);

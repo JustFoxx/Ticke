@@ -1,21 +1,34 @@
 package io.github.justfoxx.ticke.cmds;
 
+import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
+import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.spec.EmbedCreateSpec;
+import discord4j.rest.util.Permission;
 import io.github.justfoxx.ticke.Handler;
-import io.github.justfoxx.ticke.cmds.ticket.TicketHelp;
+import io.github.justfoxx.ticke.Main;
+import io.github.justfoxx.ticke.cmds.ticket.*;
+import org.yaml.snakeyaml.Yaml;
 import reactor.core.publisher.Mono;
 import reactor.util.annotation.NonNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
 
 public class Ticket implements Handler.Command {
     private final HashSet<TicketCommand> cmds = new HashSet<>();
     public void register() {
         cmds.add(new TicketHelp(this));
+        cmds.add(new TicketCreate(this));
+        cmds.add(new TicketClose(this));
+        cmds.add(new TicketAdd(this));
+        cmds.add(new TicketRemove(this));
+        cmds.add(new TicketDelete(this));
     }
     @Override @NonNull
     public String getName() {
@@ -65,6 +78,34 @@ public class Ticket implements Handler.Command {
         }
 
         return message.getChannel().flatMap(channel -> channel.createMessage(embedBuilder.build()));
+    }
+
+    public boolean hasPermission(Member member) {
+        return member.getBasePermissions().block().contains(Permission.MANAGE_CHANNELS);
+    }
+
+    public boolean isTicketChannel(MessageCreateEvent event) {
+        var channel = event.getMessage().getChannel().ofType(TextChannel.class).block();
+        return isTicketChannel(channel);
+    }
+
+    public boolean isTicketChannel(TextChannel channel) {
+        var topic = channel.getTopic().orElse("");
+        try {
+            Map<String, Object> code = Main.yaml.load(topic);
+            return code.containsKey("ticket") && code.get("ticket").equals(channel.getId().asLong());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public Optional<Map<String, Object>> getTicketCode(TextChannel channel) {
+        var topic = channel.getTopic().orElse("");
+        try {
+            return Optional.of(Main.yaml.load(topic));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     public static abstract class TicketCommand implements Handler.Command {

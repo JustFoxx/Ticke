@@ -15,6 +15,7 @@ group = project.maven_group
 repositories {
     mavenCentral()
     google()
+
 }
 
 jar {
@@ -41,8 +42,8 @@ shadowJar {
 dependencies {
     implementation("commons-io:commons-io:${project.commonsio_version}")
     implementation("org.slf4j:slf4j-log4j12:${project.slf4j_version}")
-    implementation("com.google.code.gson:gson:${project.gson_version}")
     implementation("com.discord4j:discord4j-core:${project.discord4j_version}")
+    implementation("org.yaml:snakeyaml:${project.yaml_version}")
 }
 
 jar {

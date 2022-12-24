@@ -3,25 +3,26 @@ package io.github.justfoxx.ticke.cmds.ticket;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import io.github.justfoxx.ticke.cmds.Ticket;
 import reactor.core.publisher.Mono;
+import reactor.util.annotation.NonNull;
 
 public class TicketCreate extends Ticket.TicketCommand {
     public TicketCreate(Ticket ticket) {
         super(ticket);
     }
 
-    @Override
+    @Override @NonNull
     public String getName() {
-        return null;
+        return "create";
     }
 
-    @Override
+    @Override @NonNull
     public String getDescription() {
-        return null;
+        return "Create a ticket";
     }
 
-    @Override
+    @Override @NonNull
     public String getUsage() {
-        return null;
+        return "create";
     }
 
     @Override
@@ -29,8 +30,8 @@ public class TicketCreate extends Ticket.TicketCommand {
 
     }
 
-    @Override
+    @Override @NonNull
     public Mono<?> run(String[] args, MessageCreateEvent event) throws Exception {
-        return null;
+        return Mono.empty();
     }
 }

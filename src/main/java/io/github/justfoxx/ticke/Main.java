@@ -8,6 +8,7 @@ import io.github.justfoxx.ticke.cmds.Ticket;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.Yaml;
 import reactor.core.publisher.Mono;
 
 import java.util.function.Function;
@@ -15,6 +16,7 @@ import java.util.function.Function;
 public class Main {
     public static final String token = System.getenv("TOKEN");
     public static Logger logger = LoggerFactory.getLogger(Main.class);
+    public static Yaml yaml = new Yaml();
     public static void main(String[] args) {
         Handler.register();
 

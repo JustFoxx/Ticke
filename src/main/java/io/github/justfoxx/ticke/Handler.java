@@ -2,6 +2,8 @@ package io.github.justfoxx.ticke;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.User;
+import discord4j.core.object.entity.channel.Channel;
+import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
 import io.github.justfoxx.ticke.cmds.GetMemberJoinDate;
@@ -36,6 +38,7 @@ public class Handler {
     }
 
     public static Mono<?> handle(MessageCreateEvent event) {
+        if(event.getMessage().getChannel().block().getType() != Channel.Type.GUILD_TEXT) return Mono.empty();
         String[] args = event.getMessage().getContent().split(" ");
         if (!args[0].startsWith(prefix)) {
             return Mono.empty();

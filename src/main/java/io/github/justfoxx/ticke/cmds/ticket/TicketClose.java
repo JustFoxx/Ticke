@@ -1,36 +1,45 @@
 package io.github.justfoxx.ticke.cmds.ticket;
 
 import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.PermissionOverwrite;
+import discord4j.core.object.entity.Member;
+import discord4j.core.object.entity.channel.TextChannel;
+import discord4j.rest.util.Permission;
+import discord4j.rest.util.PermissionSet;
 import io.github.justfoxx.ticke.cmds.Ticket;
 import reactor.core.publisher.Mono;
+import reactor.util.annotation.NonNull;
 
 public class TicketClose extends Ticket.TicketCommand {
     public TicketClose(Ticket ticket) {
         super(ticket);
     }
 
-    @Override
+    @Override @NonNull
     public String getName() {
-        return null;
+        return "close";
     }
 
-    @Override
+    @Override @NonNull
     public String getDescription() {
-        return null;
+        return "Close a ticket";
     }
 
-    @Override
+    @Override @NonNull
     public String getUsage() {
-        return null;
+        return "close";
     }
 
     @Override
     public void canExecute(MessageCreateEvent event) throws Exception {
-
+        ticket.canExecute(event); 
+        if (ticket.hasPermission(event.getMember().get())) throw new Exception("You do not have permission to add users to tickets");
+        if (event.getMessage().getMemberMentions().size() < 1) throw new Exception("You must mention a user to add to the ticket");
+        if (ticket.isTicketChannel(event)) throw new Exception("This channel is not ticket channel");
     }
 
-    @Override
+    @Override @NonNull
     public Mono<?> run(String[] args, MessageCreateEvent event) throws Exception {
-        return null;
+        return Mono.empty();
     }
 }
